@@ -22,6 +22,12 @@ void merge (vector<int> &s1, vector<int> &s2, vector<int> &s) {
     while (p1 != s1.end()) s.push_back(*p1++);
     while (p2 != s2.end()) s.push_back(*p2++);
 }
+// Variations on merge:
+//      It is a very generic operation in field of computer science:
+//      can be used for the following purpose:
+//      We can remove duplicates: using if (*j == *i) {c[*j++]; i++;j++}
+//      Can also be used to obtain set-difference and list-difference
+
 
 // Merge_sort(): a: Array to be sorted
 void merge_sort(vector<int> &a) {
@@ -47,6 +53,10 @@ void merge_sort(vector<int> &a) {
     merge (s1, s2, a);
 }
 
+// SHORT-COMMINGS::
+//  1. Requires extra space to achive merge in linear time. (space-time trade-off)
+//  2. It's inherently recursive. cannot be easily implemented iteratively.
+
 int main () {
     vector<int> arr = {10, 8, 1, 5, 3, 9, 12};
     merge_sort (arr);
@@ -56,3 +66,11 @@ int main () {
     return 0;
 
 }
+
+
+// :::::ANALYSIS OF MERGE SORT ALGORITHM::::::
+// Time complexity for Merge() : T(n) = T(s1.size()) + T(s2.size()) : O(max(s1.size(),s2.size())) === O(n)
+// For 'T' being time taken by merge_sort()
+//  t(n) = 2t(n/2) + n;  && t(1) = 1
+//  which eventually leads us to 'O(nlogn)' on expanding this recurrance relation.
+// t(n) = n + nlogn
