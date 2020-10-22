@@ -1,76 +1,58 @@
-#include <iostream>
+// Merge sort works on the principal of dividing the original array into subarrays and sorting thsese small sub-arrays (DIVIDE)
+// and then merging these sorted sub-arrays to form a fully sorted array. (CONQUER)
+// The merge() method lies at the heart of the merge_sort() algorithm.
+// One drawback though: space-complexity = O(n)
+// for merge sort recursive design is intuitive.
+#include <bits/stdc++.h>
 using namespace std;
 
-void merge_sort (int *a, int start, int end);
-void merge_sorted_subs (int *a, int start, int mid, int end);
-
-
-int main (void) {
-    //cout<<"Please enter the size of the array: ";
-    int n = 8; //cin>>n;
-
-    // Error-checking for array_length.
-    if (n <= 0) {
-        cout<<"Invalid array length!!!!"<<endl;
-        return -1;
+// Merge(): s1: Sorted_left_sub_array, s2: Sorted_right_sub_array, s: New array to merge two sorted arrays
+void merge (vector<int> &s1, vector<int> &s2, vector<int> &s) {
+    // iterator for left_sorted
+    vector<int>::iterator p1 = s1.begin();
+    // oterator for right_sorted
+    vector<int>::iterator p2 = s2.begin();
+    // while we haven't reached at the end of either arrays.
+    while (p1 != s1.end() && p2 != s2.end()) {
+        // compare smallest elements of each list
+        if (*p1 <= *p2) s.push_back(*p1++); // add the smallest to the resultant array
+        else s.push_back(*p2++);
     }
+    // checking for one non-empty lists IF ANY
+    while (p1 != s1.end()) s.push_back(*p1++);
+    while (p2 != s2.end()) s.push_back(*p2++);
+}
 
-    // Reading array elements from common input.
-    int arr[n] //= {14,7,3,12,9,11,6,12};
-    cout<<"Please enter "<<n<<" space separated arary elements: "<<endl;
-    for (int i = 0; i < n; i++) cin>>arr[i];
+// Merge_sort(): a: Array to be sorted
+void merge_sort(vector<int> &a) {
+    int n = a.size();
+    // base-case
+    if (n <= 1) return;
+    // Divide in two sub-arrays
+    vector<int> s1, s2;
+    vector<int>::iterator p = a.begin();
+    // populate the sub-arrays
+    for (int i = 0; i < n/2; i++) s1.push_back(*p++);
+    for (int i = n/2; i < n; i++) s2.push_back(*p++);
+    // empty the input array, so that we can merge the sorted sub-arrrays into it
+    // in this way we wouldn't be wasting any space .
+    // i.e., space-complexity: O(1)
+    a.clear();
 
-    merge_sort(arr,0,n-1);
-    for (int i = 0; i < n; i++) cout<<arr[i]<<" ";
-    cout<<endl;
+    // recursively sort both these sub-arrays.
+    merge_sort (s1);
+    merge_sort (s2);
+
+    // merge two sorted sub-arrays using method Merge().
+    merge (s1, s2, a);
+}
+
+int main () {
+    vector<int> arr = {10, 8, 1, 5, 3, 9, 12};
+    merge_sort (arr);
+    for (int i = 0; i < arr.size(); i++) {
+        cout<<arr[i]<<' ';
+    }
     return 0;
+
 }
-
-
-// PRE-CONDITION: 1)start<end   2)start and end are both within the bound of A.
-void merge_sort (int *a, int start, int end) {
-    // Recursion base-case.
-    if (end == start + 1) return;
-
-    // Get the middle index of the given array
-    int mid = (start+end) / 2;
-
-    // Merge both the sub-arrays of length ~ n/2.
-    merge_sort(a, start, mid);
-    merge_sort(a, mid, end);
-
-    merge_sorted_subs(a, start, mid, end);
-}
-// POST-CONDITION: array: A sorted in increasing order.
-
-
-// PRE-CONDITION: a[start]...a[mid-1] && a[mid]...a[end-1] sorted in increasing order.
-void merge_sorted_subs (int *a, int start, int mid, int end) {
-    int i, j, tmp[end-start], index = start;
-    for (i = start, j = mid; ((i<mid)||(j<end));) {
-        if ((i < mid)&&(j<end)) { // None of the two sub-arrays has been seen fully yet.
-            if (a[j] < a[i]) {
-                tmp[index] = a[j];
-                j++;
-            }
-            else {
-                tmp[index] = a[i];
-                i++;
-            }
-        }
-        else { // One of the sub-array is been fully seen.
-            if (i < mid) {
-                tmp[index] = a[i];
-                i++;
-            }
-            else {
-                tmp[index] = a[j];
-                j++;
-            }
-        }
-        index++;
-    }
-    for (i = start; i < end; i++) a[i] = tmp[i];
-    return;
-}
-// POST-CONDITION: a[start]...a[end-1] sorted in increasing order.
